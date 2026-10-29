@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BudgetTrip AI - Explore More. Spend Less.</title>
+  
+  <!-- Tailwind CSS CDN (Single lightweight styling library) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              navy: '#0f172a',
+              blue: '#1e3a8a',
+              teal: '#0d9488',
+              teallight: '#14b8a6',
+              orange: '#f97316',
+              orangered: '#ea580c',
+              slate: '#f8fafc',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+    }
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #print-area, #print-area * {
+        visibility: visible !important;
+      }
+      #print-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: white !important;
+        color: black !important;
+        padding: 20px;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-teal-500 selection:text-white min-h-screen flex flex-col">
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-brand-navy text-white text-xs sm:text-sm py-1.5 px-4 text-center font-medium flex items-center justify-center space-x-2">
+    <span class="bg-brand-teal text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-full">Sample Data Demo</span>
+    <span>All fares, tariffs, and restaurant prices are realistic Indian benchmarks for planning.</span>
+  </div>
+
+  <!-- Header Navigation -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-blue via-brand-teal to-brand-orange flex items-center justify-center text-white font-black text-xl shadow-md">
+          B
+        </div>
+        <div>
+          <div class="text-xl font-extrabold tracking-tight text-brand-navy flex items-center gap-1.5">
+            BudgetTrip <span class="bg-orange-100 text-brand-orangered text-xs font-bold px-2 py-0.5 rounded-full">AI</span>
+          </div>
+          <div class="text-[10px] text-slate-500 -mt-1 font-medium tracking-wide">
+            Explore More. Spend Less.
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="hidden md:flex items-center space-x-1" id="nav-tabs">
+        <button onclick="switchTab('dashboard')" class="nav-btn px-3 py-2 rounded-lg text-sm font-semibold transition bg-brand-teal text-white" data-tab="dashboard">Trip Overview</button>
+        <button onclick="switchTab('tickets')" class="nav-btn px-3 py-2 rounded-lg text-sm font-semibold transition text-slate-600 hover:bg-slate-100" data-tab="tickets">Travel Tickets</button>
+        <button onclick="switchTab('stays')" class="nav-btn px-3 py-2 rounded-lg text-sm font-semibold transition text-slate-600 hover:bg-slate-100" data-tab="stays">Budget Stays</button>
+        <button onclick="switchTab('food')" class="nav-btn px-3 py-2 rounded-lg text-sm font-semibold transition text-slate-600 hover:bg-slate-100" data-tab="food">Food & Dhabas</button>
+        <button onclick="switchTab('itinerary')" class="nav-btn px-3 py-2 rounded-lg text-sm font-semibold transition text-slate-600 hover:bg-slate-100" data-tab="itinerary">AI Itinerary</button>
+        <button onclick="switchTab('summary')" class="nav-btn px-3 py-2 rounded-lg text-sm font-semibold transition text-slate-600 hover:bg-slate-100" data-tab="summary">Trip Summary</button>
+      </nav>
+
+      <!-- Print Button & CTA -->
+      <div class="flex items-center space-x-2">
+        <button onclick="openPrintModal()" class="inline-flex items-center space-x-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-lg text-xs font-bold transition border border-slate-300">
+          <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zM9 9V5a2 2 0 012-2h2a2 2 0 012 2v4"></path></svg>
+          <span>Print Summary</span>
+        </button>
+        <a href="#search-card" class="bg-brand-orange hover:bg-brand-orangered text-white px-4 py-2 rounded-lg text-xs font-bold shadow-md transition">
+          Plan My Trip →
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Header -->
+  <section class="bg-gradient-to-br from-slate-900 via-brand-navy to-slate-800 text-white py-10 lg:py-14 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="max-w-3xl">
+        <div class="inline-flex items-center gap-2 bg-teal-500/20 border border-teal-400/30 px-3 py-1 rounded-full text-xs font-semibold text-teal-300 mb-3">
+          ✨ Smart Indian Tourism Planner for Students, Couples & Families
+        </div>
+        <h1 class="text-3xl sm:text-5xl font-black tracking-tight leading-tight mb-3">
+          Explore More. <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-300 via-teal-200 to-amber-300">Spend Less.</span>
+        </h1>
+        <p class="text-slate-300 text-sm sm:text-base mb-4 leading-relaxed">
+          Compare budget trains, verified hostels, authentic street food spots, and low-cost day itineraries with instant Rupee-by-Rupee calculations.
+        </p>
+        <div class="flex flex-wrap gap-2 text-xs text-slate-300">
+          <span class="bg-white/10 px-3 py-1 rounded-md border border-white/10">✓ IRCTC & RedBus Provider Links</span>
+          <span class="bg-white/10 px-3 py-1 rounded-md border border-white/10">✓ No Hidden Markups</span>
+          <span class="bg-white/10 px-3 py-1 rounded-md border border-white/10">✓ Live Budget Balancing</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURE 1: DESTINATION SEARCH FORM -->
+  <section id="search-card" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 relative z-20 w-full">
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-5 lg:p-6">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+        <h2 class="text-sm font-bold text-brand-navy flex items-center gap-2">
+          <span>⚙️</span> Customise Destination & Travel Parameters
+        </h2>
+        <span class="text-xs text-slate-400">Updates budget and itinerary automatically</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Origin -->
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">From (Origin)</label>
+          <input type="text" id="input-origin" value="New Delhi" class="w-full text-sm font-semibold px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-teal outline-none" />
+        </div>
+
+        <!-- Destination Dropdown -->
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Destination City</label>
+          <select id="select-destination" class="w-full text-sm font-semibold px-3 py-2 rounded-xl border border-slate-300 bg-white focus:ring-2 focus:ring-brand-teal outline-none" onchange="onDestinationChange(this.value)">
+            <option value="Jaipur">Jaipur (Rajasthan)</option>
+            <option value="Goa">Goa (Coastal Haven)</option>
+            <option value="Varanasi">Varanasi (Uttar Pradesh)</option>
+            <option value="Manali">Manali (Himachal Pradesh)</option>
+            <option value="Rishikesh">Rishikesh (Uttarakhand)</option>
+          </select>
+        </div>
+
+        <!-- Dates -->
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Departure & Return</label>
+          <div class="grid grid-cols-2 gap-2">
+            <input type="date" id="input-depart" value="2026-11-10" class="text-xs font-semibold p-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-teal outline-none" onchange="updateAll()" />
+            <input type="date" id="input-return" value="2026-11-13" class="text-xs font-semibold p-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-teal outline-none" onchange="updateAll()" />
+          </div>
+        </div>
+
+        <!-- Travellers & Type -->
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Travellers & Group Type</label>
+          <div class="grid grid-cols-2 gap-2">
+            <select id="select-travellers" class="text-xs font-semibold p-2 rounded-xl border border-slate-300 bg-white" onchange="updateAll()">
+              <option value="1">1 Person</option>
+              <option value="2" selected>2 People</option>
+              <option value="3">3 People</option>
+              <option value="4">4 People</option>
+              <option value="5">5 People</option>
+            </select>
+            <select id="select-group-type" class="text-xs font-semibold p-2 rounded-xl border border-slate-300 bg-white" onchange="updateAll()">
+              <option value="friends" selected>Friends</option>
+              <option value="solo">Solo</option>
+              <option value="couple">Couple</option>
+              <option value="family">Family</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Budget Slider -->
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="text-xs font-bold text-slate-600">Total Budget (INR)</label>
+            <span id="label-user-budget" class="text-xs font-extrabold text-brand-orange">₹15,000</span>
+          </div>
+          <input type="range" id="input-budget" min="3000" max="60000" step="1000" value="15000" class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer accent-brand-orange" oninput="onBudgetSlider(this.value)" />
+          <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+            <span>₹3,000 (Student)</span>
+            <span>₹60,000 (Family)</span>
+          </div>
+        </div>
+
+        <!-- Travel Style -->
+        <div class="lg:col-span-2">
+          <label class="block text-xs font-bold text-slate-600 mb-1">Preferred Travel Style</label>
+          <div class="grid grid-cols-3 gap-2" id="style-selector">
+            <button type="button" onclick="setTravelStyle('cheapest')" class="style-btn p-2 rounded-xl border text-left text-xs border-slate-200 bg-white" data-style="cheapest">
+              <div class="font-bold">Cheapest</div>
+              <div class="text-[10px] text-slate-400">Hostel & Sleeper</div>
+            </button>
+            <button type="button" onclick="setTravelStyle('balanced')" class="style-btn p-2 rounded-xl border text-left text-xs border-brand-teal bg-teal-50 text-brand-teal font-bold ring-1 ring-brand-teal" data-style="balanced">
+              <div class="font-bold">Balanced</div>
+              <div class="text-[10px] text-slate-500">Homestay & AC Bus</div>
+            </button>
+            <button type="button" onclick="setTravelStyle('comfortable')" class="style-btn p-2 rounded-xl border text-left text-xs border-slate-200 bg-white" data-style="comfortable">
+              <div class="font-bold">Comfortable</div>
+              <div class="text-[10px] text-slate-400">AC Hotel & Quick Trip</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Action / Day status badge -->
+        <div class="flex flex-col justify-end">
+          <div class="bg-slate-100 p-2.5 rounded-xl border border-slate-200 text-xs flex items-center justify-between">
+            <div>
+              <span class="text-slate-400 block text-[10px]">Trip Duration</span>
+              <span id="badge-duration" class="font-bold text-brand-navy">3 Days / 2 Nights</span>
+            </div>
+            <button onclick="switchTab('summary')" class="bg-brand-navy hover:bg-slate-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">
+              View Cost Summary
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+
+    <!-- Over Budget Alert Box (Feature 6) -->
+    <div id="budget-alert" class="hidden mb-6 bg-amber-50 border-l-4 border-amber-500 p-4 rounded-xl shadow-sm text-sm">
+      <div class="flex items-start gap-3">
+        <span class="text-2xl">⚠️</span>
+        <div>
+          <h3 class="font-bold text-amber-900" id="alert-title">Estimated Cost Exceeds Your Budget</h3>
+          <p class="text-amber-800 text-xs mt-1" id="alert-subtitle">Tips to save: switch to Sleeper trains, choose dorm beds, and eat at local authentic dhabas.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 1: DASHBOARD / OVERVIEW -->
+    <div id="tab-dashboard" class="tab-content space-y-8">
+      
+      <!-- Hero Destination Card -->
+      <div class="relative rounded-3xl overflow-hidden shadow-lg bg-brand-navy h-64 sm:h-72">
+        <img id="dest-hero-img" src="" alt="Destination" class="w-full h-full object-cover opacity-60" />
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent"></div>
+        <div class="absolute bottom-6 left-6 right-6 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 text-white">
+          <div>
+            <span id="dest-state" class="bg-brand-teal text-white text-[10px] font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wide">STATE</span>
+            <h2 id="dest-title" class="text-3xl sm:text-4xl font-extrabold mt-1">City Name</h2>
+            <p id="dest-desc" class="text-slate-300 text-xs sm:text-sm max-w-xl mt-1">Description goes here.</p>
+          </div>
+          <div class="bg-white/10 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/20 text-right">
+            <span class="text-[11px] text-slate-300 block">Avg Budget per Person</span>
+            <span id="dest-avg-budget" class="text-lg font-black text-amber-300">₹4,500</span>
+            <span id="dest-ideal-days" class="text-[10px] text-teal-300 block mt-0.5">Ideal: 3 Days</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Stats KPI Cards (Feature 6) -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs text-slate-500 font-semibold block">Total Estimated Cost</span>
+          <span id="kpi-total-cost" class="text-xl sm:text-2xl font-black text-brand-navy mt-1 block">₹0</span>
+          <span id="kpi-traveller-label" class="text-[10px] text-slate-400 font-medium">For all travellers</span>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs text-slate-500 font-semibold block">Cost Per Person</span>
+          <span id="kpi-per-person" class="text-xl sm:text-2xl font-black text-brand-teal mt-1 block">₹0</span>
+          <span class="text-[10px] text-slate-400 font-medium">All-inclusive estimate</span>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs text-slate-500 font-semibold block">Your Trip Budget</span>
+          <span id="kpi-target-budget" class="text-xl sm:text-2xl font-black text-slate-700 mt-1 block">₹15,000</span>
+          <span class="text-[10px] text-slate-400 font-medium">Configured limit</span>
+        </div>
+
+        <div id="kpi-balance-card" class="bg-emerald-50 border-emerald-200 text-emerald-900 p-4 rounded-2xl border shadow-sm">
+          <span class="text-xs font-semibold block" id="kpi-balance-title">Remaining Balance</span>
+          <span id="kpi-balance-value" class="text-xl sm:text-2xl font-black mt-1 block">₹0</span>
+          <span id="kpi-balance-sub" class="text-[10px] font-medium">Within target budget</span>
+        </div>
+      </div>
+
+      <!-- FEATURE 7: DESTINATION DISCOVERY TILES -->
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-extrabold text-brand-navy">Explore Top Budget Destinations in India</h3>
+            <p class="text-xs text-slate-500">Click any destination card to recalculate your trip budget instantly</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4" id="discovery-cards">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Quick Overview Cards (Transit, Stay, Food) -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[10px] font-bold uppercase text-slate-400">Selected Transport</span>
+              <span id="dash-transport-type" class="bg-blue-100 text-brand-blue text-[10px] font-bold px-2 py-0.5 rounded uppercase">TRAIN</span>
+            </div>
+            <h4 id="dash-transport-name" class="font-extrabold text-brand-navy text-base">Jaipur Superfast</h4>
+            <p id="dash-transport-details" class="text-xs text-slate-500 mt-1">06:45 AM → 11:30 AM (4h 45m)</p>
+            <div class="mt-3 flex items-baseline gap-2">
+              <span id="dash-transport-price" class="text-lg font-black text-brand-orange">₹380</span>
+              <span class="text-xs text-slate-400">/ person (one way)</span>
+            </div>
+          </div>
+          <button onclick="switchTab('tickets')" class="mt-4 text-xs font-bold text-brand-teal hover:underline text-left">
+            Compare all buses & trains →
+          </button>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[10px] font-bold uppercase text-slate-400">Selected Accommodation</span>
+              <span id="dash-stay-rating" class="bg-teal-100 text-brand-teal text-[10px] font-bold px-2 py-0.5 rounded">★ 4.8</span>
+            </div>
+            <h4 id="dash-stay-name" class="font-extrabold text-brand-navy text-base">Zostel Jaipur</h4>
+            <p id="dash-stay-details" class="text-xs text-slate-500 mt-1">Hostel Dorm Bed • Near City Palace</p>
+            <div class="mt-3 flex items-baseline gap-2">
+              <span id="dash-stay-price" class="text-lg font-black text-brand-orange">₹550</span>
+              <span class="text-xs text-slate-400">/ night</span>
+            </div>
+          </div>
+          <button onclick="switchTab('stays')" class="mt-4 text-xs font-bold text-brand-teal hover:underline text-left">
+            View all hostels & hotels →
+          </button>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[10px] font-bold uppercase text-slate-400">Food & Meals Estimate</span>
+              <span class="bg-orange-100 text-brand-orange text-[10px] font-bold px-2 py-0.5 rounded">Veg & Non-Veg</span>
+            </div>
+            <h4 class="font-extrabold text-brand-navy text-base">Authentic Local Dhabas</h4>
+            <p class="text-xs text-slate-500 mt-1">Regional thalis, kachoris, street food, and chai stops.</p>
+            <div class="mt-3 flex items-baseline gap-2">
+              <span id="dash-food-cost" class="text-lg font-black text-brand-orange">₹2,400</span>
+              <span class="text-xs text-slate-400">total food budget</span>
+            </div>
+          </div>
+          <button onclick="switchTab('food')" class="mt-4 text-xs font-bold text-brand-teal hover:underline text-left">
+            Explore recommended eateries →
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 2: TRAVEL TICKETS (FEATURE 2) -->
+    <div id="tab-tickets" class="tab-content hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
+        <div>
+          <h2 class="text-xl font-extrabold text-brand-navy">Available Travel Tickets</h2>
+          <p class="text-xs text-slate-500">Trains, buses, and flights with estimated per person & total group fares.</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <span class="text-xs font-semibold text-slate-500">Sort by:</span>
+          <select id="transport-sort" class="text-xs font-bold bg-white border border-slate-300 rounded-lg p-2" onchange="renderTransports()">
+            <option value="asc">Price: Lowest First</option>
+            <option value="desc">Price: Highest First</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-900">
+        ℹ️ <strong>Sample Data Notice:</strong> Fares are standard Indian travel benchmarks. Use the official provider links to verify tatkal/live seat availability.
+      </div>
+
+      <div id="tickets-container" class="space-y-3">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- TAB 3: BUDGET ACCOMMODATION (FEATURE 3) -->
+    <div id="tab-stays" class="tab-content hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
+        <div>
+          <h2 class="text-xl font-extrabold text-brand-navy">Budget Stays & Backpacker Hostels</h2>
+          <p class="text-xs text-slate-500">Dorms, budget guesthouses, and homestays. Auto-calculates room count based on your group.</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <span class="text-xs font-semibold text-slate-500">Sort by:</span>
+          <select id="stay-sort" class="text-xs font-bold bg-white border border-slate-300 rounded-lg p-2" onchange="renderStays()">
+            <option value="asc">Nightly Rate: Lowest First</option>
+            <option value="desc">Nightly Rate: Highest First</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="stays-container" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- TAB 4: RESTAURANTS & LOCAL FOOD (FEATURE 4) -->
+    <div id="tab-food" class="tab-content hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
+        <div>
+          <h2 class="text-xl font-extrabold text-brand-navy">Affordable Eateries & Local Street Specialties</h2>
+          <p class="text-xs text-slate-500">Authentic regional culinary spots where locals eat at pocket-friendly rates.</p>
+        </div>
+        <button id="veg-toggle" onclick="toggleVegFilter()" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition border-slate-300 bg-white text-slate-600 hover:bg-slate-50">
+          Show Pure Veg Only
+        </button>
+      </div>
+
+      <div id="food-container" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- TAB 5: AI ITINERARY GENERATOR (FEATURE 5) -->
+    <div id="tab-itinerary" class="tab-content hidden space-y-6">
+      <div class="border-b border-slate-200 pb-4">
+        <span class="inline-block bg-teal-100 text-brand-teal text-[10px] font-bold px-2.5 py-0.5 rounded uppercase mb-1">Paced For Budget Travellers</span>
+        <h2 class="text-xl font-extrabold text-brand-navy" id="itinerary-header-title">Day-Wise Travel Itinerary</h2>
+        <p class="text-xs text-slate-500">Morning, afternoon, and evening sights with realistic travel times and low entry costs.</p>
+      </div>
+
+      <div id="itinerary-container" class="space-y-4">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- TAB 6: TRIP SUMMARY (FEATURE 8 & CALCULATOR) -->
+    <div id="tab-summary" class="tab-content hidden space-y-6">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-200 pb-4">
+        <div>
+          <h2 class="text-xl font-extrabold text-brand-navy">Consolidated Trip Budget Summary</h2>
+          <p class="text-xs text-slate-500">Rupee-by-rupee breakdown of travel, stay, dining, and local experiences.</p>
+        </div>
+        <button onclick="openPrintModal()" class="bg-brand-navy hover:bg-slate-800 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+          <span>🖨️ View Printable Sheet</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 space-y-4">
+          <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+            <h3 class="font-extrabold text-brand-navy text-base mb-4 flex items-center gap-2">
+              <span>🧾</span> Itemised Expenses
+            </h3>
+            <div class="divide-y divide-slate-100 text-sm space-y-2" id="summary-breakdown">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+            <h3 class="font-extrabold text-brand-navy text-sm mb-3">Official Provider Portals</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <a href="https://www.irctc.co.in" target="_blank" class="p-3 rounded-xl border border-blue-200 bg-blue-50 text-blue-900 text-xs font-bold flex flex-col justify-between">
+                <span>Train Tickets</span>
+                <span class="text-[10px] text-blue-700 mt-2">IRCTC Official ↗</span>
+              </a>
+              <a href="https://www.redbus.in" target="_blank" class="p-3 rounded-xl border border-rose-200 bg-rose-50 text-rose-900 text-xs font-bold flex flex-col justify-between">
+                <span>Bus Booking</span>
+                <span class="text-[10px] text-rose-700 mt-2">RedBus Portal ↗</span>
+              </a>
+              <a href="https://www.hostelworld.com" target="_blank" class="p-3 rounded-xl border border-teal-200 bg-teal-50 text-teal-900 text-xs font-bold flex flex-col justify-between">
+                <span>Hostels & Dorms</span>
+                <span class="text-[10px] text-teal-700 mt-2">Hostelworld India ↗</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Budget Gauge -->
+        <div class="bg-gradient-to-br from-slate-900 to-brand-navy text-white rounded-2xl p-6 shadow-md h-fit">
+          <h3 class="font-extrabold text-white text-base mb-1">Budget Health</h3>
+          <p class="text-xs text-slate-300 mb-4">Target vs calculated expenditure</p>
+
+          <div class="space-y-3 text-xs">
+            <div class="flex justify-between">
+              <span class="text-slate-400">Target Budget:</span>
+              <span class="font-bold" id="gauge-target">₹15,000</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Estimated Total:</span>
+              <span class="font-bold text-amber-300" id="gauge-actual">₹0</span>
+            </div>
+            
+            <div class="w-full bg-slate-700 h-2.5 rounded-full overflow-hidden mt-2">
+              <div id="gauge-bar" class="h-full bg-brand-teal transition-all duration-300" style="width: 50%;"></div>
+            </div>
+
+            <div class="pt-2 flex justify-between items-center text-sm">
+              <span class="font-semibold text-slate-300">Difference:</span>
+              <span class="font-extrabold text-teal-400" id="gauge-diff">₹0</span>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-slate-700/60 text-[11px] text-slate-300 space-y-2">
+            <div>💡 <strong>Student Tip:</strong> Present college ID for 50% discount on heritage monument entry passes.</div>
+            <div>💡 <strong>Commute Tip:</strong> Use shared auto-rickshaws for short 2-3km transfers.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- PRINT-FRIENDLY SUMMARY MODAL (FEATURE 8) -->
+  <div id="print-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl relative my-8">
+      <div class="flex justify-between items-center border-b pb-3 mb-4 no-print">
+        <h3 class="font-extrabold text-brand-navy text-lg">Trip Plan Ready to Print</h3>
+        <button onclick="closePrintModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold">✕</button>
+      </div>
+
+      <div id="print-area">
+        <div class="border-b-2 border-slate-900 pb-3 mb-4">
+          <h1 class="text-2xl font-black text-slate-900">BudgetTrip AI Plan</h1>
+          <p class="text-xs text-slate-500">“Explore More. Spend Less.”</p>
+        </div>
+
+        <div id="print-content" class="text-xs space-y-3">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="border-t border-slate-200 pt-3 mt-4 text-[10px] text-slate-400">
+          Generated via BudgetTrip AI. Real bookings must be performed directly with IRCTC or official reservation desks.
+        </div>
+      </div>
+
+      <div class="mt-4 pt-3 border-t flex justify-end space-x-2 no-print">
+        <button onclick="window.print()" class="bg-brand-teal hover:bg-teal-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition">
+          Print / Save as PDF
+        </button>
+        <button onclick="closePrintModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-4 py-2 rounded-xl text-xs font-bold transition">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 text-white mt-auto border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-400">
+      <div>
+        <strong class="text-white text-sm">BudgetTrip AI</strong> — “Explore More. Spend Less.”
+        <div class="text-[11px] text-slate-500 mt-0.5">Built for Indian students, backpackers, and middle-class families.</div>
+      </div>
+      <div class="flex space-x-4">
+        <a href="https://www.irctc.co.in" target="_blank" class="hover:text-white">IRCTC</a>
+        <a href="https://www.redbus.in" target="_blank" class="hover:text-white">RedBus</a>
+        <a href="https://www.hostelworld.com" target="_blank" class="hover:text-white">Hostelworld</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- APPLICATION DATA & NATIVE JS LOGIC -->
+  <script>
+    // --- DATABASE ---
+    const DB = {
+      "Jaipur": {
+        state: "Rajasthan",
+        tagline: "The Royal Pink City of Forts and Flavours",
+        image: "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1000&q=80",
+        avgBudget: "₹4,500 - ₹9,000",
+        idealDays: 3,
+        description: "Known for magnificent palaces, bustling bazaars, and rich Rajput culinary heritage that suits every budget.",
+        transports: [
+          { id: 't1', type: 'train', name: 'Jaipur Superfast Express', code: '12955', depTime: '06:45 AM', arrTime: '11:30 AM', duration: '4h 45m', price: 380, class: 'Sleeper (SL)', link: 'https://www.irctc.co.in' },
+          { id: 't2', type: 'train', name: 'Ajmer Shatabdi Exp', code: '12015', depTime: '06:10 AM', arrTime: '10:40 AM', duration: '4h 30m', price: 920, class: 'AC Chair Car', link: 'https://www.irctc.co.in' },
+          { id: 't3', type: 'bus', name: 'RSRTC Express Volvo', code: 'RSR-202', depTime: '07:00 AM', arrTime: '12:30 PM', duration: '5h 30m', price: 490, class: 'Semi-Sleeper AC', link: 'https://www.redbus.in' },
+          { id: 't4', type: 'flight', name: 'IndiGo 6E-204', code: '6E-204', depTime: '09:15 AM', arrTime: '10:15 AM', duration: '1h 00m', price: 2650, class: 'Economy', link: 'https://www.skyscanner.co.in' }
+        ],
+        stays: [
+          { id: 's1', name: 'Zostel Jaipur (M.I. Road)', type: 'Hostel Dorm Bed', rating: 4.8, price: 550, location: 'Near City Palace', amenities: ['Free Wi-Fi', 'Rooftop Cafe', 'AC Dorms'], link: 'https://www.hostelworld.com' },
+          { id: 's2', name: 'Hotel Kalyan Heritage Haveli', type: 'Budget Heritage Room', rating: 4.3, price: 1250, location: 'Hathroi Fort', amenities: ['Fort View', 'Attached Bath', 'Geyser'], link: 'https://www.booking.com' },
+          { id: 's3', name: 'Pink City Guest House', type: 'Family Non-AC Room', rating: 4.0, price: 850, location: 'Chandpole Bazaar', amenities: ['Family Room', '24/7 Water'], link: 'https://www.booking.com' }
+        ],
+        foods: [
+          { id: 'f1', name: 'Rawat Mishthan Bhandar', type: 'Rajasthani Street Food', cost: 120, veg: true, highlight: 'Authentic Pyaaz Kachori & Mawa Kachori', address: 'Station Road, Sindhi Camp', map: 'Rawat+Mishthan+Bhandar+Jaipur' },
+          { id: 'f2', name: 'Laxmi Mishthan Bhandar (LMB)', type: 'Traditional Thali & Sweets', cost: 350, veg: true, highlight: 'Unlimited Rajasthani Dal Baati Churma', address: 'Johari Bazaar, Old City', map: 'LMB+Johari+Bazaar+Jaipur' },
+          { id: 'f3', name: 'Sanjay Omelette & Local Dhaba', type: 'Budget Multi-cuisine', cost: 180, veg: false, highlight: 'Famous Egg Varieties & Masala Paratha', address: 'Bapu Nagar', map: 'Sanjay+Omelette+Jaipur' }
+        ],
+        itinerary: [
+          { day: 1, title: "Historic Forts & Sunset Views", morning: "Visit Amber Fort (Entry: ₹100 / ₹50 for students). Explore Sheesh Mahal.", afternoon: "Stop at Jal Mahal promenade, lunch at Rawat Kachori (₹120/person).", evening: "Catch panoramic sunset at Nahargarh Fort overlooking the Pink City.", entryEst: 150, transitEst: 200 },
+          { day: 2, title: "City Palace & Old Bazaars", morning: "Tour Hawa Mahal facade and explore Jantar Mantar.", afternoon: "Lunch at LMB Johari Bazaar. Walk through colorful Bapu Bazaar.", evening: "Relax at Albert Hall Museum gardens as the museum exterior illuminates.", entryEst: 220, transitEst: 150 },
+          { day: 3, title: "Royal Cenotaphs & Local Crafts", morning: "Visit Gaitore Ki Chhatriyan (quaint royal marble cenotaphs, entry ₹30).", afternoon: "Handloom block printing observation at Sanganer.", evening: "Sample authentic Lassi at Lassiwala (MI Road, ₹60) before return transit.", entryEst: 50, transitEst: 180 }
+        ]
+      },
+      "Goa": {
+        state: "Goa",
+        tagline: "Sun, Sandy Beaches & Portuguese Architecture",
+        image: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1000&q=80",
+        avgBudget: "₹5,000 - ₹11,000",
+        idealDays: 4,
+        description: "From scenic coastal sunsets and UNESCO heritage churches to buzzing beach shacks and budget scooter road trips.",
+        transports: [
+          { id: 't1', type: 'train', name: 'Konkan Kanya Express', code: '10111', depTime: '11:05 PM', arrTime: '10:45 AM', duration: '11h 40m', price: 495, class: 'Sleeper (SL)', link: 'https://www.irctc.co.in' },
+          { id: 't2', type: 'train', name: 'Vande Bharat Express', code: '22229', depTime: '05:25 AM', arrTime: '01:10 PM', duration: '7h 45m', price: 1450, class: 'CC Executive', link: 'https://www.irctc.co.in' },
+          { id: 't3', type: 'bus', name: 'Paulo Travels Multi-Axle', code: 'PL-44', depTime: '08:00 PM', arrTime: '08:00 AM', duration: '12h 00m', price: 850, class: 'AC Sleeper', link: 'https://www.redbus.in' },
+          { id: 't4', type: 'flight', name: 'Air India Express', code: 'IX-355', depTime: '01:30 PM', arrTime: '02:45 PM', duration: '1h 15m', price: 2900, class: 'Economy', link: 'https://www.skyscanner.co.in' }
+        ],
+        stays: [
+          { id: 's1', name: 'The Hosteller Anjuna', type: 'Backpacker Dorm Bed', rating: 4.7, price: 499, location: 'Anjuna Beach Road', amenities: ['Swimming Pool', 'Wi-Fi', 'Cafe'], link: 'https://www.hostelworld.com' },
+          { id: 's2', name: 'Pousada Heritage Homestay', type: 'Budget AC Double Room', rating: 4.4, price: 1350, location: 'Calangute / Candolim', amenities: ['Balcony', 'AC', 'Bike Rental Help'], link: 'https://www.booking.com' },
+          { id: 's3', name: 'Sweet Valley Cottages', type: 'Standard Beach Shack Room', rating: 4.1, price: 950, location: 'Arambol', amenities: ['Sea Breeze', 'Hammocks'], link: 'https://www.booking.com' }
+        ],
+        foods: [
+          { id: 'f1', name: 'Vinayak Family Restaurant', type: 'Goan Coastal & Seafood', cost: 240, veg: false, highlight: 'Authentic Goan Fish Thali & Solkadhi', address: 'Assagao, North Goa', map: 'Vinayak+Family+Restaurant+Goa' },
+          { id: 'f2', name: 'Navtara Pure Vegetarian', type: 'South & North Indian Veg', cost: 150, veg: true, highlight: 'Crispy Dosas, Veg Thalis & Filter Coffee', address: 'Panjim Municipal Market', map: 'Navtara+Veg+Panjim+Goa' },
+          { id: 'f3', name: 'Curlies Beach Shack Bites', type: 'Beach Shack Bites & Juices', cost: 220, veg: false, highlight: 'Fresh Pineapple Juice & Calamari/Paneer Chilli', address: 'Anjuna Beachfront', map: 'Anjuna+Beach+Goa' }
+        ],
+        itinerary: [
+          { day: 1, title: "North Goa Beaches & Sunset Fort", morning: "Arrive, rent a shared scooter (₹350/day), check in and enjoy beach breakfast.", afternoon: "Explore Vagator beach coves and unwind under the palm shadows.", evening: "Climb up to Chapora Fort for sunset views (Free entry).", entryEst: 0, transitEst: 250 },
+          { day: 2, title: "Old Goa Heritage & Latin Quarter", morning: "Visit Basilica of Bom Jesus and Se Cathedral in Old Goa (UNESCO site, Free).", afternoon: "Stroll through the pastel lanes of Fontainhas. Authentic Goan lunch at Vinayak.", evening: "Miramar Beach sunset promenade stroll.", entryEst: 20, transitEst: 200 },
+          { day: 3, title: "Arambol Vibe & Sweet Water Lake", morning: "Ride north to Arambol Beach; scenic cliff walk to Sweet Water Lake.", afternoon: "Cliffside cafes and fresh coconut water (₹40).", evening: "Night market exploring or beach acoustics.", entryEst: 0, transitEst: 250 }
+        ]
+      },
+      "Varanasi": {
+        state: "Uttar Pradesh",
+        tagline: "The World's Oldest Spiritual City & Holy Ghats",
+        image: "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1000&q=80",
+        avgBudget: "₹3,000 - ₹6,500",
+        idealDays: 3,
+        description: "Experience eternal Ganga Aarti, morning hand-rowed boat rides, ancient serpentine alleyways, and famous street chaat.",
+        transports: [
+          { id: 't1', type: 'train', name: 'Kashi Vishwanath Express', code: '15128', depTime: '11:35 AM', arrTime: '04:40 AM', duration: '17h 05m', price: 420, class: 'Sleeper (SL)', link: 'https://www.irctc.co.in' },
+          { id: 't2', type: 'train', name: 'Vande Bharat Express', code: '22436', depTime: '06:00 AM', arrTime: '02:00 PM', duration: '8h 00m', price: 1650, class: 'AC Chair Car', link: 'https://www.irctc.co.in' },
+          { id: 't3', type: 'bus', name: 'UPSRTC Janrath AC', code: 'UP-89', depTime: '07:30 PM', arrTime: '07:00 AM', duration: '11h 30m', price: 750, class: 'AC Seater', link: 'https://www.redbus.in' },
+          { id: 't4', type: 'flight', name: 'SpiceJet SG-8491', code: 'SG-8491', depTime: '08:40 AM', arrTime: '10:05 AM', duration: '1h 25m', price: 3100, class: 'Economy', link: 'https://www.skyscanner.co.in' }
+        ],
+        stays: [
+          { id: 's1', name: 'Moustache Varanasi Hostel', type: 'Rooftop Dorm', rating: 4.6, price: 420, location: 'Near Assi Ghat', amenities: ['Ghat View', 'High-speed Wi-Fi', 'Clean Linen'], link: 'https://www.hostelworld.com' },
+          { id: 's2', name: 'Ganga View Guest House', type: 'Private Room with River View', rating: 4.2, price: 1100, location: 'Dashashwamedh Ghat', amenities: ['River Facing', 'Hot Shower'], link: 'https://www.booking.com' },
+          { id: 's3', name: 'Shiva Pilgrims Lodge', type: 'Standard Non-AC Room', rating: 4.0, price: 650, location: 'Godowlia Chowk', amenities: ['Walking distance to Temple'], link: 'https://www.booking.com' }
+        ],
+        foods: [
+          { id: 'f1', name: 'Kashi Chaat Bhandar', type: 'Iconic Street Chaat', cost: 90, veg: true, highlight: 'Tamatar Chaat & Palak Patta Chaat', address: 'Godowlia Road', map: 'Kashi+Chaat+Bhandar+Varanasi' },
+          { id: 'f2', name: 'Blue Lassi Shop', type: 'Traditional Kulhad Lassi', cost: 70, veg: true, highlight: 'Rabri & Pomegranate Lassi in clay cups', address: 'Bangali Tola Lane', map: 'Blue+Lassi+Shop+Varanasi' },
+          { id: 'f3', name: 'Chachi Ki Kachori & Jalebi', type: 'Traditional Morning Breakfast', cost: 50, veg: true, highlight: 'Crispy Kachoris with spicy aloo and hot jalebi', address: 'Near BHU Gate', map: 'Chachi+Ki+Kachori+Varanasi' }
+        ],
+        itinerary: [
+          { day: 1, title: "Assi Ghat Sunrise & Old Alleyways", morning: "Wake up at 5:30 AM for Subah-e-Banaras at Assi Ghat; shared boat ride (₹150).", afternoon: "Breakfast of Kachori Jalebi at Lanka. Walk through ancient lanes.", evening: "Witness the magnificent Evening Ganga Aarti at Dashashwamedh Ghat (Free).", entryEst: 150, transitEst: 80 },
+          { day: 2, title: "Sarnath & Heritage Sites", morning: "Shared auto to Sarnath (where Buddha delivered his first sermon; entry ₹25).", afternoon: "Visit Sarnath Archaeological Museum. Enjoy simple thali lunch.", evening: "Return to ghats; enjoy evening Tamatar chaat at Kashi Chaat Bhandar.", entryEst: 40, transitEst: 180 },
+          { day: 3, title: "Silk Weavers & Earthen Lassi", morning: "Explore traditional Banarasi handloom silk weavers in Madanpura.", afternoon: "Taste famous Blue Lassi and visit Manikarnika viewpoint respectfully.", evening: "Pick up authentic Banarasi sweets (Lal Peda) before departure.", entryEst: 0, transitEst: 100 }
+        ]
+      },
+      "Manali": {
+        state: "Himachal Pradesh",
+        tagline: "Snow-Capped Peaks, Pine Valleys & Riverside Cafes",
+        image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1000&q=80",
+        avgBudget: "₹5,500 - ₹12,000",
+        idealDays: 4,
+        description: "Gateway to Solang and Rohtang, famous for cedar forests, apple orchards, backpacker culture, and mountain trails.",
+        transports: [
+          { id: 't1', type: 'bus', name: 'HRTC Himsuta Volvo AC', code: 'HRTC-V', depTime: '08:30 PM', arrTime: '09:00 AM', duration: '12h 30m', price: 1100, class: 'AC Volvo Sleeper', link: 'https://www.redbus.in' },
+          { id: 't2', type: 'bus', name: 'Zingbus Electric/Volvo', code: 'ZB-402', depTime: '07:00 PM', arrTime: '07:30 AM', duration: '12h 30m', price: 950, class: 'AC Semi-Sleeper', link: 'https://www.redbus.in' },
+          { id: 't3', type: 'flight', name: 'Alliance Air (to Kullu)', code: '9I-805', depTime: '07:15 AM', arrTime: '08:35 AM', duration: '1h 20m', price: 4200, class: 'Economy', link: 'https://www.skyscanner.co.in' }
+        ],
+        stays: [
+          { id: 's1', name: 'goSTOPS Manali', type: 'Mountain View Dorm Bed', rating: 4.7, price: 480, location: 'Old Manali', amenities: ['Bonfire', 'Valley View', 'Wi-Fi'], link: 'https://www.hostelworld.com' },
+          { id: 's2', name: 'Cedar Pine Cottages', type: 'Wooden Deluxe Room', rating: 4.4, price: 1250, location: 'Vashisht Village', amenities: ['Hot Sulphur Springs Nearby', 'Balcony'], link: 'https://www.booking.com' },
+          { id: 's3', name: 'Snow Valley Homestay', type: 'Family Attic Room', rating: 4.1, price: 850, location: 'Aleo', amenities: ['Mountain View', 'Home Cooked Meals'], link: 'https://www.booking.com' }
+        ],
+        foods: [
+          { id: 'f1', name: 'Cafe 1947', type: 'Riverside Italian & Himachali', cost: 280, veg: false, highlight: 'Woodfired pizza & Beas river views', address: 'Old Manali Bridge', map: 'Cafe+1947+Manali' },
+          { id: 'f2', name: 'Siddu Corner Old Manali', type: 'Traditional Himachali Snack', cost: 80, veg: true, highlight: 'Steamed Siddu with ghee and mint chutney', address: 'Club House Road', map: 'Siddu+Corner+Old+Manali' },
+          { id: 'f3', name: 'Sher-e-Punjab Dhaba', type: 'North Indian Budget Meals', cost: 160, veg: false, highlight: 'Dal Makhani, Butter Naan & Kadai Paneer', address: 'The Mall Road', map: 'Sher-e-Punjab+Mall+Road+Manali' }
+        ],
+        itinerary: [
+          { day: 1, title: "Old Manali & Hadimba Temple", morning: "Stroll across ancient cedar forests towards 500-yr old Hadimba Devi Temple (Entry ₹20).", afternoon: "Walk to Manu Temple in Old Manali; lunch at Siddu Corner.", evening: "Relax at riverside cafes with warm ginger lemon honey tea.", entryEst: 20, transitEst: 100 },
+          { day: 2, title: "Solang Valley & Atal Tunnel", morning: "Shared local taxi to Solang Valley (₹150). Watch paragliding.", afternoon: "Drive through Atal Tunnel to Sissu waterfall (Lahaul Valley).", evening: "Return to Mall Road Manali for evening shopping and street momos.", entryEst: 50, transitEst: 450 },
+          { day: 3, title: "Jogini Falls & Hot Springs", morning: "Free trek from Vashisht village through pine woods to Jogini Waterfalls.", afternoon: "Natural hot sulphur water bath at Vashisht.", evening: "Dinner at riverside dhaba; pack bags for return travel.", entryEst: 0, transitEst: 120 }
+        ]
+      },
+      "Rishikesh": {
+        state: "Uttarakhand",
+        tagline: "Yoga Capital of the World & River Adventure",
+        image: "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1000&q=80",
+        avgBudget: "₹3,200 - ₹7,000",
+        idealDays: 3,
+        description: "Known for serene ashrams, emerald Ganga river views, budget white-water rafting, and cliffside cafes.",
+        transports: [
+          { id: 't1', type: 'train', name: 'Yoga Express', code: '19031', depTime: '04:15 AM', arrTime: '12:25 PM', duration: '8h 10m', price: 290, class: 'Sleeper (SL)', link: 'https://www.irctc.co.in' },
+          { id: 't2', type: 'train', name: 'Jan Shatabdi Exp', code: '12055', depTime: '03:20 PM', arrTime: '07:35 PM', duration: '4h 15m', price: 580, class: 'AC Chair Car', link: 'https://www.irctc.co.in' },
+          { id: 't3', type: 'bus', name: 'UTC Uttarakhand Volvo', code: 'UTC-09', depTime: '09:00 PM', arrTime: '04:30 AM', duration: '7h 30m', price: 650, class: 'AC Sleeper', link: 'https://www.redbus.in' }
+        ],
+        stays: [
+          { id: 's1', name: 'Skyard Rishikesh Hostel', type: 'Rooftop River-view Dorm', rating: 4.8, price: 390, location: 'Tapovan', amenities: ['Yoga Terrace', 'Ganga View', 'Wi-Fi'], link: 'https://www.hostelworld.com' },
+          { id: 's2', name: 'Green Valley Ashram Guest House', type: 'Budget Twin Room', rating: 4.3, price: 850, location: 'Laxman Jhula', amenities: ['Quiet Garden', 'Clean Room'], link: 'https://www.booking.com' },
+          { id: 's3', name: 'Holy Ganga Riverside Camp', type: 'Riverside Tent with Meals', rating: 4.2, price: 990, location: 'Shivpuri', amenities: ['Meals Included', 'Bonfire'], link: 'https://www.booking.com' }
+        ],
+        foods: [
+          { id: 'f1', name: 'Little Buddha Cafe', type: 'Vegetarian Cafe & Bakery', cost: 180, veg: true, highlight: 'Falafel platter, Shakshuka & river view', address: 'Near Laxman Jhula, Tapovan', map: 'Little+Buddha+Cafe+Rishikesh' },
+          { id: 'f2', name: 'Chotiwala Restaurant', type: 'Traditional Garhwali Thali', cost: 220, veg: true, highlight: 'Unlimited North Indian Thali with Puri Sabzi', address: 'Swarg Ashram', map: 'Chotiwala+Restaurant+Rishikesh' },
+          { id: 'f3', name: 'Triveni Ghat Street Chaat', type: 'Local Sweets & Street Food', cost: 60, veg: true, highlight: 'Fresh Aloo Tikki & Jalebi Rabri', address: 'Triveni Ghat Market', map: 'Triveni+Ghat+Rishikesh' }
+        ],
+        itinerary: [
+          { day: 1, title: "Suspension Bridges & Beatles Ashram", morning: "Arrive in Tapovan, cross Ram Jhula and explore quiet ashram pathways.", afternoon: "Tour the famous Beatles Ashram (Chaurasi Kutia; Entry: ₹150 / ₹75 for students).", evening: "Soulful evening Ganga Aarti at Parmarth Niketan (Free).", entryEst: 150, transitEst: 80 },
+          { day: 2, title: "River Rafting & Cliff Jump", morning: "Thrilling 16km white-water river rafting from Shivpuri (approx ₹650 booked locally).", afternoon: "Cliff jumping and Maggi break by the sandy river banks.", evening: "Cafe hopping in Tapovan; enjoy lemon iced tea at Little Buddha Cafe.", entryEst: 650, transitEst: 100 },
+          { day: 3, title: "Neer Garh Waterfalls & Yoga", morning: "Morning yoga session by the ghats (Free / donation).", afternoon: "Hike up to multi-tier Neer Garh Waterfall (Entry: ₹30). Dip feet in cool water.", evening: "Pick up handmade souvenirs and herbal teas before return trip.", entryEst: 30, transitEst: 120 }
+        ]
+      }
+    };
+
+    // --- STATE ---
+    let currentDest = "Jaipur";
+    let selectedTransportId = "t1";
+    let selectedStayId = "s1";
+    let travelStyle = "balanced";
+    let filterVegOnly = false;
+    let userBudget = 15000;
+
+    const formatINR = (amt) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amt);
+
+    function getDays() {
+      const d1 = new Date(document.getElementById('input-depart').value);
+      const d2 = new Date(document.getElementById('input-return').value);
+      const diff = Math.ceil(Math.abs(d2 - d1) / (1000 * 60 * 60 * 24));
+      return diff > 0 ? diff : 1;
+    }
+
+    function getTravellers() {
+      return parseInt(document.getElementById('select-travellers').value, 10) || 1;
+    }
+
+    // --- CALCULATION ENGINE ---
+    function calculateBudget() {
+      const destData = DB[currentDest];
+      const travellers = getTravellers();
+      const days = getDays();
+
+      const activeTransport = destData.transports.find(t => t.id === selectedTransportId) || destData.transports[0];
+      const activeStay = destData.stays.find(s => s.id === selectedStayId) || destData.stays[0];
+
+      // Roundtrip ticket cost for group
+      const transportCost = (activeTransport.price * 2) * travellers;
+
+      // Accommodation: Dorms per person, private rooms 1 per 2 persons
+      const isDorm = activeStay.type.toLowerCase().includes('dorm');
+      const unitsNeeded = isDorm ? travellers : Math.ceil(travellers / 2);
+      const stayCost = activeStay.price * unitsNeeded * days;
+
+      // Food
+      const dailyFoodRate = travelStyle === 'cheapest' ? 250 : travelStyle === 'balanced' ? 400 : 700;
+      const foodCost = dailyFoodRate * travellers * days;
+
+      // Sightseeing & Entry fees from itinerary
+      const sightseeingPerPerson = destData.itinerary.reduce((sum, item) => sum + item.entryEst, 0);
+      const sightseeingCost = sightseeingPerPerson * travellers;
+
+      // Local Transit
+      const dailyTransitRate = travelStyle === 'cheapest' ? 120 : 250;
+      const localTransitCost = dailyTransitRate * days * Math.ceil(travellers / 2);
+
+      // 5% Buffer & Taxes
+      const subTotal = transportCost + stayCost + foodCost + sightseeingCost + localTransitCost;
+      const buffer = Math.round(subTotal * 0.05);
+      const grandTotal = subTotal + buffer;
+      const costPerPerson = Math.round(grandTotal / travellers);
+      const balance = userBudget - grandTotal;
+
+      return {
+        activeTransport,
+        activeStay,
+        transportCost,
+        stayCost,
+        foodCost,
+        sightseeingCost,
+        localTransitCost,
+        buffer,
+        grandTotal,
+        costPerPerson,
+        balance,
+        unitsNeeded,
+        isDorm,
+        days,
+        travellers
+      };
+    }
+
+    // --- RENDER FUNCTIONS ---
+    function renderDiscoveryCards() {
+      const container = document.getElementById('discovery-cards');
+      container.innerHTML = Object.keys(DB).map(key => {
+        const item = DB[key];
+        const isSel = key === currentDest;
+        return `
+          <div onclick="onDestinationChange('${key}')" class="cursor-pointer rounded-2xl overflow-hidden border transition bg-white ${isSel ? 'border-brand-teal ring-2 ring-brand-teal/50 shadow-md' : 'border-slate-200 hover:border-slate-300'}">
+            <div class="h-28 relative">
+              <img src="${item.image}" alt="${key}" class="w-full h-full object-cover" />
+              <span class="absolute top-2 right-2 bg-slate-900/80 text-white text-[9px] font-bold px-2 py-0.5 rounded">${item.idealDays} Days</span>
+              <span class="absolute bottom-2 left-2 bg-white/95 text-brand-navy text-[9px] font-extrabold px-1.5 py-0.5 rounded">${item.avgBudget}</span>
+            </div>
+            <div class="p-2.5">
+              <h4 class="font-extrabold text-brand-navy text-xs">${key}</h4>
+              <p class="text-[10px] text-slate-400 truncate">${item.state}</p>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderTransports() {
+      const container = document.getElementById('tickets-container');
+      const sort = document.getElementById('transport-sort').value;
+      const list = [...DB[currentDest].transports].sort((a,b) => sort === 'asc' ? a.price - b.price : b.price - a.price);
+      const travellers = getTravellers();
+
+      container.innerHTML = list.map(item => {
+        const isSel = selectedTransportId === item.id;
+        const totalRound = item.price * 2 * travellers;
+        return `
+          <div class="bg-white rounded-2xl p-4 border transition ${isSel ? 'border-brand-teal ring-2 ring-brand-teal/40 shadow-sm' : 'border-slate-200'}">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-base ${item.type === 'train' ? 'bg-amber-100 text-amber-800' : item.type === 'bus' ? 'bg-rose-100 text-rose-800' : 'bg-sky-100 text-sky-800'}">
+                  ${item.type === 'train' ? '🚆' : item.type === 'bus' ? '🚌' : '✈️'}
+                </div>
+                <div>
+                  <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">${item.type} • ${item.class}</div>
+                  <div class="text-sm font-extrabold text-brand-navy">${item.name}</div>
+                  <span class="text-[10px] text-slate-500">Service #${item.code}</span>
+                </div>
+              </div>
+
+              <div class="flex items-center space-x-5 text-center text-xs">
+                <div>
+                  <div class="font-extrabold text-slate-800">${item.depTime}</div>
+                  <div class="text-[10px] text-slate-400">${document.getElementById('input-origin').value}</div>
+                </div>
+                <div class="flex flex-col items-center">
+                  <span class="text-[10px] text-slate-400 font-semibold">${item.duration}</span>
+                  <div class="w-16 h-0.5 bg-slate-300 relative my-1">
+                    <div class="absolute -top-1 right-0 w-2 h-2 rounded-full bg-brand-teal"></div>
+                  </div>
+                  <span class="text-[9px] text-emerald-600 font-bold">Direct</span>
+                </div>
+                <div>
+                  <div class="font-extrabold text-slate-800">${item.arrTime}</div>
+                  <div class="text-[10px] text-slate-400">${currentDest}</div>
+                </div>
+              </div>
+
+              <div class="flex items-center md:items-end justify-between md:justify-end w-full md:w-auto gap-4 border-t md:border-t-0 pt-3 md:pt-0">
+                <div class="text-left md:text-right">
+                  <div class="text-base font-black text-brand-navy">${formatINR(item.price)}</div>
+                  <div class="text-[10px] text-slate-400">per person (one-way)</div>
+                  <div class="text-[10px] text-brand-orange font-bold">${formatINR(totalRound)} roundtrip (${travellers}p)</div>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <button onclick="selectTransport('${item.id}')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition ${isSel ? 'bg-brand-teal text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'}">
+                    ${isSel ? '✓ Selected' : 'Choose Fare'}
+                  </button>
+                  <a href="${item.link}" target="_blank" class="text-[9px] text-center text-blue-600 hover:underline font-semibold">Official Booking ↗</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderStays() {
+      const container = document.getElementById('stays-container');
+      const sort = document.getElementById('stay-sort').value;
+      const list = [...DB[currentDest].stays].sort((a,b) => sort === 'asc' ? a.price - b.price : b.price - a.price);
+      const travellers = getTravellers();
+      const days = getDays();
+
+      container.innerHTML = list.map(item => {
+        const isSel = selectedStayId === item.id;
+        const isDorm = item.type.toLowerCase().includes('dorm');
+        const units = isDorm ? travellers : Math.ceil(travellers / 2);
+        const total = item.price * units * days;
+
+        return `
+          <div class="bg-white rounded-2xl overflow-hidden border flex flex-col justify-between transition ${isSel ? 'border-brand-teal ring-2 ring-brand-teal/40 shadow-sm' : 'border-slate-200'}">
+            <div class="p-5">
+              <div class="flex items-center justify-between mb-2">
+                <span class="bg-slate-100 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded uppercase">${item.type}</span>
+                <span class="bg-emerald-100 text-emerald-800 text-xs font-extrabold px-2 py-0.5 rounded">★ ${item.rating}</span>
+              </div>
+              <h3 class="font-extrabold text-brand-navy text-sm leading-snug">${item.name}</h3>
+              <div class="text-xs text-slate-500 mt-1">📍 ${item.location}</div>
+              <div class="flex flex-wrap gap-1 mt-3">
+                ${item.amenities.map(a => `<span class="text-[9px] bg-slate-50 text-slate-600 border border-slate-200 px-1.5 py-0.5 rounded">${a}</span>`).join('')}
+              </div>
+              <div class="mt-4 pt-3 border-t border-slate-100 flex items-baseline justify-between">
+                <div>
+                  <span class="text-xs text-slate-400">Tariff:</span>
+                  <span class="text-base font-black text-brand-navy ml-1">${formatINR(item.price)}</span>
+                  <span class="text-[10px] text-slate-400">/ night</span>
+                </div>
+                <div class="text-right">
+                  <span class="text-[10px] text-slate-400 block">${days}N • ${units} ${isDorm ? 'bed(s)' : 'room(s)'}</span>
+                  <span class="text-xs font-black text-brand-orange">${formatINR(total)}</span>
+                </div>
+              </div>
+            </div>
+            <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center gap-2">
+              <button onclick="selectStay('${item.id}')" class="flex-1 py-2 rounded-xl text-xs font-bold transition ${isSel ? 'bg-brand-teal text-white shadow' : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-100'}">
+                ${isSel ? '✓ Stay Applied' : 'Select Stay'}
+              </button>
+              <a href="${item.link}" target="_blank" class="p-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-600 hover:text-brand-navy" title="Provider link">↗</a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderFood() {
+      const container = document.getElementById('food-container');
+      const list = DB[currentDest].foods.filter(f => !filterVegOnly || f.veg);
+
+      container.innerHTML = list.map(item => `
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded ${item.veg ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
+                ${item.veg ? '● Pure Veg' : '▲ Non-Veg Available'}
+              </span>
+              <span class="text-xs font-black text-brand-orange">~${formatINR(item.cost)} / person</span>
+            </div>
+            <h3 class="font-extrabold text-brand-navy text-sm mt-1">${item.name}</h3>
+            <div class="text-xs text-teal-600 font-semibold">${item.type}</div>
+            <div class="mt-2.5 bg-amber-50 p-2 rounded-lg text-xs text-amber-900 border border-amber-200/60">
+              <strong class="block text-[10px] text-amber-800">Must Try:</strong>
+              ${item.highlight}
+            </div>
+            <p class="text-xs text-slate-500 mt-2">📍 ${item.address}</p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100">
+            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.map)}" target="_blank" class="w-full inline-flex items-center justify-center space-x-1 bg-slate-100 hover:bg-teal-50 hover:text-brand-teal text-slate-700 py-1.5 rounded-xl text-xs font-bold transition">
+              <span>Directions on Maps</span>
+              <span>↗</span>
+            </a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderItinerary() {
+      const container = document.getElementById('itinerary-container');
+      const list = DB[currentDest].itinerary;
+      document.getElementById('itinerary-header-title').innerText = `Day-Wise Budget Travel Itinerary: ${currentDest}`;
+
+      container.innerHTML = list.map(item => `
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+          <div class="bg-gradient-to-r from-slate-900 to-brand-navy p-3.5 text-white flex justify-between items-center text-xs">
+            <div class="flex items-center space-x-2 font-bold">
+              <span class="bg-brand-orange px-2 py-0.5 rounded text-white font-extrabold">Day ${item.day}</span>
+              <span>${item.title}</span>
+            </div>
+            <div class="text-slate-300">
+              Entry: <strong class="text-teal-300">${formatINR(item.entryEst)}</strong> • Local Transit: <strong class="text-amber-300">${formatINR(item.transitEst)}</strong>
+            </div>
+          </div>
+          <div class="p-4 grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+              <div class="font-bold text-brand-navy mb-1">🌅 Morning (8:30 AM - 12:30 PM)</div>
+              <p class="text-slate-600 leading-relaxed">${item.morning}</p>
+            </div>
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+              <div class="font-bold text-brand-navy mb-1">☀️ Afternoon & Lunch</div>
+              <p class="text-slate-600 leading-relaxed">${item.afternoon}</p>
+            </div>
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+              <div class="font-bold text-brand-navy mb-1">🌆 Evening & Sunset</div>
+              <p class="text-slate-600 leading-relaxed">${item.evening}</p>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderSummaryAndKPIs() {
+      const calc = calculateBudget();
+      const dest = DB[currentDest];
+
+      // Update Dashboard Hero & Overview
+      document.getElementById('dest-hero-img').src = dest.image;
+      document.getElementById('dest-state').innerText = dest.state;
+      document.getElementById('dest-title').innerText = currentDest;
+      document.getElementById('dest-desc').innerText = dest.description;
+      document.getElementById('dest-avg-budget').innerText = dest.avgBudget;
+      document.getElementById('dest-ideal-days').innerText = `Ideal: ${dest.idealDays} Days`;
+      document.getElementById('badge-duration').innerText = `${calc.days} Days / ${calc.days - 1 > 0 ? calc.days - 1 : 1} Nights`;
+
+      // Update KPIs
+      document.getElementById('kpi-total-cost').innerText = formatINR(calc.grandTotal);
+      document.getElementById('kpi-per-person').innerText = formatINR(calc.costPerPerson);
+      document.getElementById('kpi-target-budget').innerText = formatINR(userBudget);
+      document.getElementById('kpi-traveller-label').innerText = `For all ${calc.travellers} traveller(s)`;
+
+      const balanceCard = document.getElementById('kpi-balance-card');
+      const balanceTitle = document.getElementById('kpi-balance-title');
+      const balanceVal = document.getElementById('kpi-balance-value');
+      const balanceSub = document.getElementById('kpi-balance-sub');
+
+      if (calc.balance >= 0) {
+        balanceCard.className = "bg-emerald-50 border-emerald-200 text-emerald-900 p-4 rounded-2xl border shadow-sm";
+        balanceTitle.innerText = "Remaining Balance";
+        balanceVal.innerText = formatINR(calc.balance);
+        balanceSub.innerText = "🎉 Within target budget";
+        document.getElementById('budget-alert').classList.add('hidden');
+      } else {
+        balanceCard.className = "bg-rose-50 border-rose-200 text-rose-900 p-4 rounded-2xl border shadow-sm";
+        balanceTitle.innerText = "Budget Deficit";
+        balanceVal.innerText = formatINR(Math.abs(calc.balance));
+        balanceSub.innerText = "⚠️ Exceeds target budget";
+        document.getElementById('budget-alert').classList.remove('hidden');
+        document.getElementById('alert-title').innerText = `Trip Cost (${formatINR(calc.grandTotal)}) Exceeds Budget by ${formatINR(Math.abs(calc.balance))}`;
+      }
+
+      // Quick dashboard cards
+      document.getElementById('dash-transport-type').innerText = calc.activeTransport.type;
+      document.getElementById('dash-transport-name').innerText = calc.activeTransport.name;
+      document.getElementById('dash-transport-details').innerText = `${calc.activeTransport.depTime} → ${calc.activeTransport.arrTime} (${calc.activeTransport.duration})`;
+      document.getElementById('dash-transport-price').innerText = formatINR(calc.activeTransport.price);
+
+      document.getElementById('dash-stay-rating').innerText = `★ ${calc.activeStay.rating}`;
+      document.getElementById('dash-stay-name').innerText = calc.activeStay.name;
+      document.getElementById('dash-stay-details').innerText = `${calc.activeStay.type} • ${calc.activeStay.location}`;
+      document.getElementById('dash-stay-price').innerText = formatINR(calc.activeStay.price);
+
+      document.getElementById('dash-food-cost').innerText = formatINR(calc.foodCost);
+
+      // Tab 6 summary lines
+      document.getElementById('summary-breakdown').innerHTML = `
+        <div class="py-2.5 flex justify-between">
+          <div>
+            <strong class="text-slate-800">Roundtrip Tickets (${calc.activeTransport.name})</strong>
+            <span class="block text-xs text-slate-400">${formatINR(calc.activeTransport.price)} × 2 directions × ${calc.travellers}p</span>
+          </div>
+          <span class="font-bold text-slate-900">${formatINR(calc.transportCost)}</span>
+        </div>
+        <div class="py-2.5 flex justify-between">
+          <div>
+            <strong class="text-slate-800">Accommodation (${calc.activeStay.name})</strong>
+            <span class="block text-xs text-slate-400">${formatINR(calc.activeStay.price)} / night × ${calc.days} nights (${calc.unitsNeeded} units)</span>
+          </div>
+          <span class="font-bold text-slate-900">${formatINR(calc.stayCost)}</span>
+        </div>
+        <div class="py-2.5 flex justify-between">
+          <div>
+            <strong class="text-slate-800">Food & Regional Dining</strong>
+            <span class="block text-xs text-slate-400">Breakfast, lunch, dinner and snacks across all days</span>
+          </div>
+          <span class="font-bold text-slate-900">${formatINR(calc.foodCost)}</span>
+        </div>
+        <div class="py-2.5 flex justify-between">
+          <div>
+            <strong class="text-slate-800">Sightseeing & Entry Passes</strong>
+            <span class="block text-xs text-slate-400">Forts, heritage monuments, and attractions</span>
+          </div>
+          <span class="font-bold text-slate-900">${formatINR(calc.sightseeingCost)}</span>
+        </div>
+        <div class="py-2.5 flex justify-between">
+          <div>
+            <strong class="text-slate-800">Local Transit</strong>
+            <span class="block text-xs text-slate-400">Shared auto-rickshaws, e-rickshaws, and local commute</span>
+          </div>
+          <span class="font-bold text-slate-900">${formatINR(calc.localTransitCost)}</span>
+        </div>
+        <div class="py-2.5 flex justify-between text-xs text-slate-500">
+          <span>Taxes & Emergency Contingency (5%)</span>
+          <span>${formatINR(calc.buffer)}</span>
+        </div>
+        <div class="pt-3 flex justify-between items-baseline text-base border-t">
+          <div>
+            <strong class="text-brand-navy">Total Trip Expenditure</strong>
+            <span class="block text-xs font-bold text-brand-teal">${formatINR(calc.costPerPerson)} / person</span>
+          </div>
+          <span class="text-xl font-black text-brand-orange">${formatINR(calc.grandTotal)}</span>
+        </div>
+      `;
+
+      // Gauge in summary tab
+      document.getElementById('gauge-target').innerText = formatINR(userBudget);
+      document.getElementById('gauge-actual').innerText = formatINR(calc.grandTotal);
+      const gaugeBar = document.getElementById('gauge-bar');
+      const gaugeDiff = document.getElementById('gauge-diff');
+      const pct = Math.min(100, Math.round((calc.grandTotal / userBudget) * 100));
+      gaugeBar.style.width = pct + '%';
+
+      if (calc.balance >= 0) {
+        gaugeBar.className = "h-full bg-brand-teal transition-all duration-300";
+        gaugeDiff.className = "font-extrabold text-teal-400";
+        gaugeDiff.innerText = `+${formatINR(calc.balance)} Saved`;
+      } else {
+        gaugeBar.className = "h-full bg-rose-500 transition-all duration-300";
+        gaugeDiff.className = "font-extrabold text-rose-400";
+        gaugeDiff.innerText = `-${formatINR(Math.abs(calc.balance))} Over Budget`;
+      }
+
+      // Populate Print Content
+      document.getElementById('print-content').innerHTML = `
+        <div class="grid grid-cols-2 gap-4 pb-2 border-b">
+          <div>
+            <p><strong>Destination:</strong> ${currentDest} (${dest.state})</p>
+            <p><strong>From:</strong> ${document.getElementById('input-origin').value}</p>
+            <p><strong>Duration:</strong> ${calc.days} Days (${calc.travellers} Travellers)</p>
+          </div>
+          <div class="text-right">
+            <p><strong>Total Estimate:</strong> ${formatINR(calc.grandTotal)}</p>
+            <p><strong>Cost Per Person:</strong> ${formatINR(calc.costPerPerson)}</p>
+            <p><strong>Style:</strong> ${travelStyle.toUpperCase()}</p>
+          </div>
+        </div>
+        <div class="py-2 border-b">
+          <p><strong>Transit:</strong> ${calc.activeTransport.name} (${calc.activeTransport.type}) — ${formatINR(calc.activeTransport.price)}/person</p>
+          <p><strong>Stay:</strong> ${calc.activeStay.name} (${calc.activeStay.type}) — ${formatINR(calc.activeStay.price)}/night</p>
+        </div>
+        <div class="py-2">
+          <h4 class="font-bold text-slate-800 uppercase mb-1">Day-Wise Plan</h4>
+          ${dest.itinerary.map(day => `
+            <div class="mb-1.5">
+              <strong>Day ${day.day}: ${day.title}</strong>
+              <div class="text-slate-600">• ${day.morning}</div>
+              <div class="text-slate-600">• ${day.afternoon}</div>
+              <div class="text-slate-600">• ${day.evening}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function updateAll() {
+      renderDiscoveryCards();
+      renderTransports();
+      renderStays();
+      renderFood();
+      renderItinerary();
+      renderSummaryAndKPIs();
+    }
+
+    // --- INTERACTION HANDLERS ---
+    function onDestinationChange(newDest) {
+      currentDest = newDest;
+      document.getElementById('select-destination').value = newDest;
+      selectedTransportId = DB[newDest].transports[0].id;
+      selectedStayId = DB[newDest].stays[0].id;
+      updateAll();
+    }
+
+    function onBudgetSlider(val) {
+      userBudget = parseInt(val, 10);
+      document.getElementById('label-user-budget').innerText = formatINR(userBudget);
+      renderSummaryAndKPIs();
+    }
+
+    function setTravelStyle(style) {
+      travelStyle = style;
+      document.querySelectorAll('.style-btn').forEach(btn => {
+        if (btn.dataset.style === style) {
+          btn.className = "style-btn p-2 rounded-xl border text-left text-xs border-brand-teal bg-teal-50 text-brand-teal font-bold ring-1 ring-brand-teal";
+        } else {
+          btn.className = "style-btn p-2 rounded-xl border text-left text-xs border-slate-200 bg-white text-slate-600";
+        }
+      });
+      renderSummaryAndKPIs();
+    }
+
+    function selectTransport(id) {
+      selectedTransportId = id;
+      renderTransports();
+      renderSummaryAndKPIs();
+    }
+
+    function selectStay(id) {
+      selectedStayId = id;
+      renderStays();
+      renderSummaryAndKPIs();
+    }
+
+    function toggleVegFilter() {
+      filterVegOnly = !filterVegOnly;
+      const btn = document.getElementById('veg-toggle');
+      if (filterVegOnly) {
+        btn.className = "px-3 py-1.5 rounded-xl text-xs font-bold border transition bg-emerald-600 text-white border-emerald-600";
+        btn.innerText = "✓ Pure Veg Filter ON";
+      } else {
+        btn.className = "px-3 py-1.5 rounded-xl text-xs font-bold border transition border-slate-300 bg-white text-slate-600 hover:bg-slate-50";
+        btn.innerText = "Show Pure Veg Only";
+      }
+      renderFood();
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      const activeEl = document.getElementById(`tab-${tabId}`);
+      if (activeEl) activeEl.classList.remove('hidden');
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        if (btn.dataset.tab === tabId) {
+          btn.className = "nav-btn px-3 py-2 rounded-lg text-sm font-semibold transition bg-brand-teal text-white";
+        } else {
+          btn.className = "nav-btn px-3 py-2 rounded-lg text-sm font-semibold transition text-slate-600 hover:bg-slate-100";
+        }
+      });
+      window.scrollTo({ top: 400, behavior: 'smooth' });
+    }
+
+    function openPrintModal() {
+      document.getElementById('print-modal').classList.remove('hidden');
+    }
+
+    function closePrintModal() {
+      document.getElementById('print-modal').classList.add('hidden');
+    }
+
+    // --- INITIALIZE APPLICATION ON LOAD ---
+    window.addEventListener('DOMContentLoaded', () => {
+      updateAll();
+    });
+  </script>
+</body>
+</html>
